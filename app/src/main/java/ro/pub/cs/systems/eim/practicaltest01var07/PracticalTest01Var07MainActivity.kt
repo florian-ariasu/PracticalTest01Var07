@@ -1,11 +1,15 @@
 package ro.pub.cs.systems.eim.practicaltest01var07
 
+import android.R.attr.showText
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -59,17 +63,29 @@ class PracticalTest01Var07MainActivity : AppCompatActivity() {
             fourthNumber.setText((1..10).random().toString())
         }
 
+        secondaryActivityLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    Toast.makeText(
+                        this, "REGISTERED",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                if (result.resultCode == Activity.RESULT_CANCELED) {
+                    Toast.makeText(
+                        this, "CANCELLED",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
         setButton.setOnClickListener {
-            val intent = Intent(
-                this,
-                PracticalTest01Var07SecondaryActivity::class.java
-            )
-
-//            intent.putExtra(
-//                PracticalTest01Var07SecondaryActivity.TOTAL_ACCESSES,
-//                firstCounter + secondCounter
-//            )
-
+            val intent = Intent(this, PracticalTest01Var07SecondaryActivity::class.java).apply {
+                putExtra("firstNumber", firstNumber.text.toString())
+                putExtra("secondNumber", secondNumber.text.toString())
+                putExtra("thirdNumber", thirdNumber.text.toString())
+                putExtra("fourthNumber", fourthNumber.text.toString())
+            }
             secondaryActivityLauncher.launch(intent)
         }
     }
